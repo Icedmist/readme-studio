@@ -51,6 +51,25 @@ export default function CardStudio() {
   const [githubStatus, setGithubStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [importStatus, setImportStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
+  // First-visit onboarding.
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardStep, setOnboardStep] = useState(0);
+  useEffect(() => {
+    try {
+      if (!window.localStorage.getItem("card-onboarded")) setShowOnboarding(true);
+    } catch {
+      setShowOnboarding(true);
+    }
+  }, []);
+  const finishOnboarding = () => {
+    try {
+      window.localStorage.setItem("card-onboarded", "1");
+    } catch {
+      // Private mode — just close for this session.
+    }
+    setShowOnboarding(false);
+  };
+
   const [tab, setTab] = useState<"preview" | "markdown">("preview");
   const [copied, setCopied] = useState(false);
   const [bundleStatus, setBundleStatus] = useState<"idle" | "creating" | "done">("idle");
@@ -213,6 +232,7 @@ export default function CardStudio() {
             : githubStatus === "ready"
               ? `Live data from @${githubProfile?.username}`
               : "One SVG as your whole profile"}
+          <button className="text-button" onClick={() => { setOnboardStep(0); setShowOnboarding(true); }}>❓ Intro</button>
           <a className="github-login" href="/" style={{ textDecoration: "none" }}>
             Full studio <span>↗</span>
           </a>
@@ -446,6 +466,121 @@ export default function CardStudio() {
           </div>
         </section>
       </div>
+
+      {showOnboarding && (
+        <div
+          style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(23,35,33,.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
+          onClick={finishOnboarding}
+        >
+          <div
+            style={{ background: "var(--cream)", border: "1px solid var(--ink)", borderRadius: 12, maxWidth: 580, width: "100%", maxHeight: "90vh", overflowY: "auto", padding: 28 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+              <p className="eyebrow">Single-card · step {onboardStep + 1} of 4</p>
+              <button className="text-button" onClick={finishOnboarding} aria-label="Close onboarding">Skip ×</button>
+            </div>
+
+            {onboardStep === 0 && (
+              <>
+                <h2 style={{ fontSize: 30, letterSpacing: "-.04em", margin: "8px 0 10px" }}>Your whole README,<br />one waving picture.</h2>
+                <p style={{ color: "#66716b", fontSize: 14, lineHeight: 1.6 }}>
+                  This studio turns your GitHub presence into a single customizable SVG card — your name,
+                  live stats and a character with its own scene. Three steps and you can ship it.
+                </p>
+              </>
+            )}
+
+            {onboardStep === 1 && (
+              <>
+                <h2 style={{ fontSize: 30, letterSpacing: "-.04em", margin: "8px 0 10px" }}>Who is this card for?</h2>
+                <p style={{ color: "#66716b", fontSize: 14, lineHeight: 1.6 }}>
+                  Enter your GitHub handle — we pull your live profile and parse your current README
+                  to prefill everything.
+                </p>
+                <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+                  <div className="input-prefix" style={{ flex: 1 }}>
+                    <span>@</span>
+                    <input value={profile.handle} onChange={(e) => setField("handle", e.target.value.replace(/^@/, ""))} placeholder="github-handle" />
+                  </div>
+                  <button className="save-button" onClick={async () => { await importFromGithub(); }} disabled={!githubProfile || importStatus === "loading"}>
+                    {importStatus === "loading" ? "Importing…" : importStatus === "success" ? "✓ Imported" : "Import my details"}
+                  </button>
+                </div>
+                <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#7e8980", marginTop: 10 }}>
+                  {githubStatus === "loading" ? "Looking up that handle…" : githubStatus === "ready" ? `Found @${githubProfile?.username} — hit import.` : githubStatus === "error" ? "Could not find that handle yet — you can continue anyway." : "Type a public GitHub handle above."}
+                </p>
+              </>
+            )}
+
+            {onboardStep === 2 && (
+              <>
+                <h2 style={{ fontSize: 30, letterSpacing: "-.04em", margin: "8px 0 10px" }}>Pick your character</h2>
+                <p style={{ color: "#66716b", fontSize: 14, lineHeight: 1.6 }}>Each one brings its own scene — the hacker gets a laptop, the boss gets a briefcase.</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginTop: 14 }}>
+                  {cardPersonas.map((persona) => {
+                    const selected = cardSettings.persona === persona.id;
+                    return (
+                      <button
+                        key={persona.id}
+                        onClick={() => setCardField("persona", persona.id)}
+                        title={persona.note}
+                        style={{
+                          border: selected ? "2px solid var(--orange)" : "1px solid var(--line)",
+                          borderRadius: 8,
+                          background: selected ? "#fff4ef" : "#fff",
+                          padding: 4,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img src={svgData(buildPersonaPreviewSvg(persona.id, cardSettings))} alt={persona.name} style={{ width: "100%", height: 64, objectFit: "contain" }} />
+                        <strong style={{ fontSize: 9 }}>{persona.emoji}</strong>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {onboardStep === 3 && (
+              <>
+                <h2 style={{ fontSize: 30, letterSpacing: "-.04em", margin: "8px 0 10px" }}>Ship it</h2>
+                <p style={{ color: "#66716b", fontSize: 14, lineHeight: 1.6 }}>
+                  Your README becomes a single image pointing at <strong>assets/profile-card.svg</strong>.
+                  Copy it, download the bundle, or publish straight to GitHub.
+                </p>
+                <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+                  <button className="save-button" onClick={copyMarkdown}>{copied ? "✓ Copied" : "Copy Markdown"}</button>
+                  <button className="save-button" style={{ background: "var(--ink)" }} onClick={downloadBundle}>
+                    {bundleStatus === "done" ? "✓ Bundled" : "ZIP bundle"} ↓
+                  </button>
+                  <button className="save-button" style={{ background: "var(--ink)" }} onClick={publishToGitHub}>
+                    {publishStatus === "success" ? "✓ Published" : "Add to GitHub"} ↗
+                  </button>
+                </div>
+              </>
+            )}
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 24 }}>
+              <div style={{ display: "flex", gap: 6 }}>
+                {[0, 1, 2, 3].map((i) => (
+                  <span key={i} style={{ width: 22, height: 4, borderRadius: 2, background: i === onboardStep ? "var(--orange)" : "var(--line)" }} />
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                {onboardStep > 0 && <button className="text-button" onClick={() => setOnboardStep(onboardStep - 1)}>← Back</button>}
+                {onboardStep < 3 ? (
+                  <button className="save-button" onClick={() => setOnboardStep(onboardStep + 1)}>Next →</button>
+                ) : (
+                  <button className="save-button" onClick={finishOnboarding}>Start customizing →</button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
