@@ -613,6 +613,21 @@ export default function Home() {
             </div>
           ))}
 
+          <div className="panel-divider small" />
+
+          {/* Single-card studio lives on its own page now */}
+          <div className="panel-heading compact">
+            <div>
+              <span className="section-number">07</span>
+              <h2>Single-Card Mode</h2>
+            </div>
+          </div>
+          <p className="panel-subtext">One SVG as your whole README — name + waving character, fully customizable.</p>
+          <a href="/card" style={{ display: "block", border: "1px solid var(--ink)", background: "var(--cream)", padding: 13, textDecoration: "none", color: "inherit" }}>
+            <strong style={{ display: "block", fontSize: 12 }}>Open the single-card studio <span style={{ color: "var(--orange)" }}>↗</span></strong>
+            <small style={{ display: "block", color: "#7e8980", fontFamily: "'DM Mono', monospace", fontSize: 9, marginTop: 5 }}>12 personas · onboarding · auto-import · /card</small>
+          </a>
+
           <div className="editor-actions">
             <button className="text-button" onClick={reset}>Reset</button>
             <button className="save-button" onClick={saveDraft}>{saved ? "Saved" : "Save draft"} <span>↗</span></button>
@@ -687,7 +702,6 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
 }
 
 function resolveAsset(src: string | Blob | undefined, svgFiles: { hero: string; process: string; signals: string; projects: string; community: string; techOrbit: string; terminal: string; pulseWave: string }) {
-  if (typeof src !== "string") return "";
   if (src === "./assets/profile-hero.svg") return svgData(svgFiles.hero);
   if (src === "./assets/process-flow.svg") return svgData(svgFiles.process);
   if (src === "./assets/github-signals.svg") return svgData(svgFiles.signals);
