@@ -232,8 +232,8 @@ export default function CardStudio() {
             : githubStatus === "ready"
               ? `Live data from @${githubProfile?.username}`
               : "One SVG as your whole profile"}
-          <button className="text-button" onClick={() => { setOnboardStep(0); setShowOnboarding(true); }}>❓ Intro</button>
-          <a className="github-login" href="/" style={{ textDecoration: "none" }}>
+          <button className="text-button topbar-keep" onClick={() => { setOnboardStep(0); setShowOnboarding(true); }}>❓ Intro</button>
+          <a className="github-login topbar-keep" href="/" style={{ textDecoration: "none" }}>
             Full studio <span>↗</span>
           </a>
         </div>
@@ -286,7 +286,7 @@ export default function CardStudio() {
             </div>
           </div>
           <small>PERSONA — PICK YOUR CHARACTER:</small>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, margin: "8px 0 12px" }}>
+          <div className="persona-grid">
             {cardPersonas.map((persona) => {
               const selected = cardSettings.persona === persona.id;
               return (
@@ -502,8 +502,8 @@ export default function CardStudio() {
                   Enter your GitHub handle — we pull your live profile and parse your current README
                   to prefill everything.
                 </p>
-                <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-                  <div className="input-prefix" style={{ flex: 1 }}>
+                <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+                  <div className="input-prefix" style={{ flex: "1 1 220px" }}>
                     <span>@</span>
                     <input value={profile.handle} onChange={(e) => setField("handle", e.target.value.replace(/^@/, ""))} placeholder="github-handle" />
                   </div>
@@ -521,7 +521,7 @@ export default function CardStudio() {
               <>
                 <h2 style={{ fontSize: 30, letterSpacing: "-.04em", margin: "8px 0 10px" }}>Pick your character</h2>
                 <p style={{ color: "#66716b", fontSize: 14, lineHeight: 1.6 }}>Each one brings its own scene — the hacker gets a laptop, the boss gets a briefcase.</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginTop: 14 }}>
+                <div className="onboard-persona-grid">
                   {cardPersonas.map((persona) => {
                     const selected = cardSettings.persona === persona.id;
                     return (
