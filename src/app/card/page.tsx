@@ -11,6 +11,7 @@ import {
   defaultProfileCardSettings,
   ProfileCardSettings,
 } from "../data/profileCard";
+import { parseReadmeDetails } from "../data/readmeImport";
 
 type GithubProfile = {
   username: string;
@@ -107,17 +108,33 @@ export default function CardStudio() {
     [profile.name]
   );
 
-  // Pull name / bio / handle from the live GitHub profile into the form.
-  const importFromGithub = () => {
+  // Pull name / bio / handle from the live GitHub profile, plus role,
+  // tagline and location parsed out of the user's current README.
+  const importFromGithub = async () => {
     if (!githubProfile) return;
     setImportStatus("loading");
+    let details = {};
+    try {
+      const res = await fetch(`/api/github/readme?username=${encodeURIComponent(githubProfile.username)}`);
+      if (res.ok) {
+        const payload = await res.json();
+        if (typeof payload.content === "string") details = parseReadmeDetails(payload.content);
+      }
+    } catch {
+      // No README (or private) — profile data alone is still a good import.
+    }
+    const { name, headline, bio, location } = details as { name?: string; headline?: string; bio?: string; location?: string };
+    const role = headline || githubProfile.bio || profile.headline;
+    const tagline = bio || githubProfile.bio || profile.bio;
     setProfile((current) => ({
       ...current,
-      name: githubProfile.name || current.name,
+      name: name || githubProfile.name || current.name,
       handle: githubProfile.username,
-      bio: githubProfile.bio || current.bio,
-      headline: githubProfile.bio || current.headline,
+      bio: tagline,
+      headline: role,
+      location: location || current.location,
     }));
+    setCardSettings((current) => ({ ...current, role, tagline }));
     setImportStatus("success");
     window.setTimeout(() => setImportStatus("idle"), 2200);
   };
