@@ -467,6 +467,10 @@ export default function CardStudio() {
         </section>
       </div>
 
+      <footer style={{ textAlign: "center", padding: "0 42px 40px", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: ".08em", color: "#7e8980" }}>
+        made with readme/studio · <a href="https://icedmist.tech" style={{ color: "var(--orange)" }}>icedmist.tech</a>
+      </footer>
+
       {showOnboarding && (
         <div
           style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(23,35,33,.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}
