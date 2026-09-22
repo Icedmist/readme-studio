@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Readme/Studio",
+  title: "Readme studio",
   description: "Create an expressive GitHub profile README with editable sections, animated SVGs, live profile data, and one-click publishing.",
   icons: {
     icon: "/pictures/readme-studio-logo.png",

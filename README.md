@@ -1,4 +1,4 @@
- # readme / studio
+ # Readme studio
 
  An editable GitHub Profile README builder with live GitHub data, GitHub Flavored Markdown preview, generated animated SVG assets, and optional one-click publishing.
 

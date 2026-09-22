@@ -365,7 +365,7 @@ export default function Home() {
       <header className="topbar">
         <div className="brand-lockup">
           <span className="brand-mark">✳</span>
-          <span>readme / studio</span>
+          <span>Readme studio</span>
         </div>
         <div className="topbar-meta">
           <span className="status-dot" /> {saved ? "Draft saved" : "Autosaved just now"}

@@ -221,7 +221,7 @@ export default function CardStudio() {
       <header className="topbar">
         <div className="brand-lockup">
           <a href="/" style={{ color: "inherit", textDecoration: "none" }}>
-            <span className="brand-mark">✳</span> <span>readme / studio</span>
+            <span className="brand-mark">✳</span> <span>Readme studio</span>
           </a>
           <span style={{ color: "#9aa39b" }}>/ single-card</span>
         </div>
@@ -468,7 +468,7 @@ export default function CardStudio() {
       </div>
 
       <footer style={{ textAlign: "center", padding: "0 42px 40px", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: ".08em", color: "#7e8980" }}>
-        made with readme/studio · <a href="https://icedmist.tech" style={{ color: "var(--orange)" }}>icedmist.tech</a>
+        Made with Readme studio · <a href="https://icedmist.tech" style={{ color: "var(--orange)" }}>icedmist.tech</a>
       </footer>
 
       {showOnboarding && (
